@@ -1,0 +1,167 @@
+openapi: 3.0.0
+info:
+  title: Управление системой умного дома
+  version: 1.0.0
+  description: API для управления состоянием системы и температурой через датчики.
+servers:
+  - url: https://api.example.com/v1
+    description: Базовый URL для API
+
+paths:
+  /change-state:
+    post:
+      summary: Изменение состояния системы
+      description: Метод позволяет изменить состояние системы на основе данных пользователя, дома и датчика.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: Идентификатор пользователя
+                houseId:
+                  type: integer
+                  description: Идентификатор дома
+                sensorId:
+                  type: integer
+                  description: Идентификатор датчика
+                state:
+                  type: string
+                  description: Новое состояние системы (например, "on", "off")
+              required:
+                - userId
+                - houseId
+                - sensorId
+                - state
+            examples:
+              example-1:
+                value:
+                  userId: 123
+                  houseId: 456
+                  sensorId: 789
+                  state: "on"
+      responses:
+        '200':
+          description: Состояние успешно изменено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Статус выполнения операции
+              examples:
+                success:
+                  value:
+                    status: "success"
+        '404':
+          description: Устройство или датчик не найдены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+              examples:
+                not-found:
+                  value:
+                    error: "Device or sensor not found"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+              examples:
+                server-error:
+                  value:
+                    error: "Internal server error"
+
+  /change-temperature:
+    post:
+      summary: Изменение температуры системы
+      description: Метод позволяет установить необходимую температуру в системе на основе данных пользователя, дома и датчика.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: Идентификатор пользователя
+                houseId:
+                  type: integer
+                  description: Идентификатор дома
+                sensorId:
+                  type: integer
+                  description: Идентификатор датчика
+                temperature:
+                  type: number
+                  format: float
+                  description: Необходимая температура
+              required:
+                - userId
+                - houseId
+                - sensorId
+                - temperature
+            examples:
+              example-1:
+                value:
+                  userId: 123
+                  houseId: 456
+                  sensorId: 789
+                  temperature: 22.5
+      responses:
+        '200':
+          description: Температура успешно изменена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Статус выполнения операции
+              examples:
+                success:
+                  value:
+                    status: "success"
+        '404':
+          description: Устройство или датчик не найдены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+              examples:
+                not-found:
+                  value:
+                    error: "Device or sensor not found"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+              examples:
+                server-error:
+                  value:

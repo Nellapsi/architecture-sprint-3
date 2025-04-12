@@ -1,0 +1,111 @@
+asyncapi: 2.6.0
+id: 'urn:com:example:system-state-api'
+defaultContentType: application/json
+info:
+  title: API для уведомлений об изменениях в системе
+  version: 1.0.0
+  description: >
+    Этот API используется для публикации сообщений об изменении состояния системы
+    и температуры в топики Kafka.
+  contact:
+    name: Служба поддержки
+    email: support@example.com
+    url: https://example.com/support
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: system-state
+    description: Сообщения об изменении состояния системы.
+  - name: temperature-updates
+    description: Сообщения об изменении температуры.
+servers:
+  production:
+    url: kafka://kafka-broker.example.com:9092
+    protocol: kafka
+    description: Kafka брокер для production-среды.
+channels:
+  system-state-changes:
+    publish:
+      summary: Публикация сообщения об изменении состояния системы.
+      operationId: publishSystemStateChange
+      message:
+        $ref: '#/components/messages/SystemStateChangeMessage'
+    bindings:
+      kafka:
+        topic: system.state.changes
+    description: >
+      Ключ для этого сообщения должен быть комбинацией `userId` и `houseId`
+      (например, "user123-house456") для корректного разделения в Kafka.
+  temperature-updates:
+    publish:
+      summary: Публикация сообщения об изменении температуры.
+      operationId: publishTemperatureUpdate
+      message:
+        $ref: '#/components/messages/TemperatureUpdateMessage'
+    bindings:
+      kafka:
+        topic: temperature.updates
+    description: >
+      Ключ для этого сообщения должен быть комбинацией `userId` и `houseId`
+      (например, "user123-house456") для корректного разделения в Kafka.
+components:
+  messages:
+    SystemStateChangeMessage:
+      messageId: system.state.change.message
+      name: SystemStateChangeMessage
+      title: Сообщение об изменении состояния системы
+      summary: Сообщение, указывающее на изменение состояния системы.
+      payload:
+        type: object
+        properties:
+          userId:
+            type: string
+            description: Уникальный идентификатор пользователя.
+            example: user123
+          houseId:
+            type: string
+            description: Уникальный идентификатор дома.
+            example: house456
+          sensorId:
+            type: string
+            description: Уникальный идентификатор датчика.
+            example: sensor789
+          state:
+            type: string
+            description: Новое состояние системы.
+            example: active
+        required:
+          - userId
+          - houseId
+          - sensorId
+          - state
+    TemperatureUpdateMessage:
+      messageId: temperature.update.message
+      name: TemperatureUpdateMessage
+      title: Сообщение об изменении температуры
+      summary: Сообщение, указывающее на изменение желаемой температуры.
+      payload:
+        type: object
+        properties:
+          userId:
+            type: string
+            description: Уникальный идентификатор пользователя.
+            example: user123
+          houseId:
+            type: string
+            description: Уникальный идентификатор дома.
+            example: house456
+          sensorId:
+            type: string
+            description: Уникальный идентификатор датчика.
+            example: sensor789
+          desiredTemperature:
+            type: number
+            description: Желаемая температура, установленная пользователем.
+            example: 22.5
+        required:
+          - userId
+          - houseId
+          - sensorId
+          - desiredTemperature
